@@ -173,6 +173,16 @@ public class Map3DFragment extends Base3DFragment implements View.OnTouchListene
 			);
 			getCurrentScene().addChild(object3DSVGPolygon);
 
+
+			Object3DSVGPolygon object3DSVGPolygon3 = new Object3DSVGPolygon(
+					new ColorARGB(0.4f, 0.5f, 0.5f, 0.8f),
+					arrayList,
+					3, 1,
+					false,
+					false
+			);
+			getCurrentScene().addChild(object3DSVGPolygon3);
+
 			Object3DSVGPolygon object3DSVGPolygon2 = new Object3DSVGPolygon(
 					new ColorARGB(0.5f, 0.5f, 0.8f, 0.8f),
 					arrayList2,
@@ -216,6 +226,13 @@ public class Map3DFragment extends Base3DFragment implements View.OnTouchListene
 			Line3D line2 = new Line3D(points2, 1, Color.BLACK);
 			line2.setMaterial(material3);
 			getCurrentScene().addChild(line2);
+		}
+
+		@Override
+		protected void onRender(long ellapsedRealtime, double deltaTime) {
+			super.onRender(ellapsedRealtime, deltaTime);
+
+			Log.i("","VVV [[[");
 		}
 	}
 }
