@@ -33,6 +33,9 @@ import java.util.Stack;
 public class Map3DFragment extends Base3DFragment implements View.OnTouchListener {
 	ColoredLinesRenderer renderClass;
 
+	private static boolean isLeft = false;
+	private static boolean isRight = false;
+
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
@@ -40,55 +43,22 @@ public class Map3DFragment extends Base3DFragment implements View.OnTouchListene
 		View view = inflater.inflate(R.layout.object_picking_overlay, mLayout, true);
 		((View) mRenderSurface).setOnTouchListener(this);
 
-		view.findViewById(R.id.left123).setOnClickListener(view1 -> {
-
-			Vector3 vector3Pos = renderClass.getCurrentCamera().getPosition();
-			Vector3 vector3look = renderClass.getCurrentCamera().getLookAt();
-
-			float deltaX = (float) (vector3Pos.x - vector3look.x);
-			float deltaY = (float) (vector3Pos.z - vector3look.z);
-
-			float l = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-			float tg = deltaY / deltaX;
-
-			float n = 0f;
-			if(deltaX < 0 ) {
-				n = (float) - Math.PI;
+		view.findViewById(R.id.left123).setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				if (event.getAction() == 1) { isLeft = false; }
+				if (event.getAction() == 0) { isLeft = true;  }
+				return true;
 			}
-
-			float radian = n + (float) Math.atan(tg);
-
-			radian -= 0.04f;
-
-			float x = (float) (vector3Pos.x - l * Math.cos(radian));
-			float y = (float) (vector3Pos.z - l * Math.sin(radian));
-
-			renderClass.getCurrentCamera().setLookAt(x,  vector3look.y , y  );
 		});
 
-		view.findViewById(R.id.right123).setOnClickListener(view1 -> {
-			Vector3 vector3Pos = renderClass.getCurrentCamera().getPosition();
-			Vector3 vector3look = renderClass.getCurrentCamera().getLookAt();
-
-			float deltaX = (float) (vector3Pos.x - vector3look.x);
-			float deltaY = (float) (vector3Pos.z - vector3look.z);
-
-			float l = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-			float tg = deltaY / deltaX;
-
-			float n = 0f;
-			if(deltaX < 0 ) {
-				n = (float) - Math.PI;
+		view.findViewById(R.id.right123).setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				if (event.getAction() == 1) { isRight = false; }
+				if (event.getAction() == 0) { isRight = true;  }
+				return true;
 			}
-
-			float radian = n + (float) Math.atan(tg);
-
-			radian += 0.04f;
-
-			float x = (float) (vector3Pos.x - l * Math.cos(radian));
-			float y = (float) (vector3Pos.z - l * Math.sin(radian));
-
-			renderClass.getCurrentCamera().setLookAt(x,  vector3look.y , y  );
 		});
 
 		return mLayout;
@@ -232,7 +202,36 @@ public class Map3DFragment extends Base3DFragment implements View.OnTouchListene
 		protected void onRender(long ellapsedRealtime, double deltaTime) {
 			super.onRender(ellapsedRealtime, deltaTime);
 
-			Log.i("","VVV [[[");
+			int vec = 0;
+
+			if(isLeft || isRight) {
+
+				if (isRight) vec = 1;
+				if (isLeft) vec = -1;
+
+				Vector3 vector3Pos = getCurrentCamera().getPosition();
+				Vector3 vector3look = getCurrentCamera().getLookAt();
+
+				float deltaX = (float) (vector3Pos.x - vector3look.x);
+				float deltaY = (float) (vector3Pos.z - vector3look.z);
+
+				float l = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+				float tg = deltaY / deltaX;
+
+				float n = 0f;
+				if (deltaX < 0) {
+					n = (float) -Math.PI;
+				}
+
+				float radian = n + (float) Math.atan(tg);
+
+				radian += 0.4f * vec * deltaTime;
+
+				float x = (float) (vector3Pos.x - l * Math.cos(radian));
+				float y = (float) (vector3Pos.z - l * Math.sin(radian));
+
+				getCurrentCamera().setLookAt(x, vector3look.y, y);
+			}
 		}
 	}
 }
